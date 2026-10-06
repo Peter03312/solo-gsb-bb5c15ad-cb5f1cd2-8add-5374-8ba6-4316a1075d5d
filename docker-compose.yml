@@ -1,0 +1,25 @@
+services:
+  orchestrator:
+    build: .
+    image: batch-orchestrator:1.0.0
+    container_name: batch-orchestrator
+    ports:
+      - "8000:8000"
+    environment:
+      ORCH_DB_PATH: /data/orchestrator.db
+      ORCH_LEASE_SECONDS: "30"
+      ORCH_DEFAULT_MAX_ATTEMPTS: "3"
+      ORCH_REAPER_INTERVAL_SECONDS: "10"
+      ORCH_BUSY_TIMEOUT_MS: "5000"
+    volumes:
+      - orchestrator-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  orchestrator-data:
