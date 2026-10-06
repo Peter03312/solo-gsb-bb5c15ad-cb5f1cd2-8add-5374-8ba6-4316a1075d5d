@@ -1,0 +1,16 @@
+services:
+  orchestrator:
+    build: .
+    image: batch-orchestrator:latest
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_PATH: /data/orchestrator.db
+      DEFAULT_LEASE_SECONDS: "30"
+      MAX_LEASE_SECONDS: "3600"
+    volumes:
+      - orchestrator-data:/data
+    restart: unless-stopped
+
+volumes:
+  orchestrator-data:
